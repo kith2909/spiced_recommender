@@ -1,19 +1,42 @@
+
 {% extends 'recommend_edu/base.html' %}
 
-{% block title %} Recommender System, questionary  {% endblock %}
+{% block title %}Recommender System, Questionnaire{% endblock %}
 
 {% block content %}
-    <form action="{% url 'recommend_edu:vote' question.id %}" method="post">
-    {% csrf_token %}
-    <fieldset>
-        <legend><h1>{{ question.question_text }}</h1></legend>
-        {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-        {% for choice in question.choice_set.all %}
-            <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
-            <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
-        {% endfor %}
-    </fieldset>
-    <input type="submit" value="Vote">
-    </form>
+    <form action="{% url 'recommend_edu:vote' %}" method="post">
+        {% csrf_token %}
+        <fieldset>
+            <legend><h1>{{ question.question_text }}</h1></legend>
+            {% if error_message %}
+                <p><strong>{{ error_message }}</strong></p>
+            {% endif %}
 
+            {% if question.long_test %}
+
+               {% for choice in question.choice_set.all %}
+                    {% if question.type_answer == '1' %}
+                    <input type="checkbox" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
+                    <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
+                    {% elif question.type_answer == '2' %}
+                    <input type="number" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
+                    <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
+                    {% elif question.type_answer == '3' %}
+                    <input type="text" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
+                    <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
+                    {% elif question.type_answer == '5' %}
+                    <select name="choice" id="choice{{ forloop.counter }}">
+                        {% for grade_choice in choice.grade_choice_set.all %}
+                          <option value="{{ grade_choice.id }}">{{ grade_choice.grade_text }}</option>
+                        {% endfor %}
+
+                    </select><br>
+                     {% endif %}
+                {% endfor %}
+
+            {% endif %}
+
+        </fieldset>
+        <input type="submit" value="Vote">
+    </form>
 {% endblock %}

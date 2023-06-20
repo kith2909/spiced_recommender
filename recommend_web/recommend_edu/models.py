@@ -5,11 +5,23 @@ import datetime
 from django.contrib import admin
 
 
-class ChatMessage(models.Model):
+class Person(models.Model):
     user_id = models.TextField()
+
+
+class ChatMessage(models.Model):
+    user_id = models.ForeignKey(Person, on_delete=models.CASCADE)
     user_message = models.TextField()
     bot_response = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
+
+
+class Answer(models.Model):
+    person = models.ForeignKey(Person, on_delete=models.CASCADE)
+    hobbies = models.TextField()
+    mean_age = models.IntegerField()
+    work_in_team = models.BooleanField()
+    stubbornness_level = models.IntegerField()
 
 
 class Job(models.Model):
@@ -31,9 +43,17 @@ class Job(models.Model):
 class Question(models.Model):
     question_text = models.CharField(max_length=200)
     pub_date = models.DateTimeField("date published")
+    person = models.ForeignKey(Person, on_delete=models.CASCADE)
+    hobbies = models.TextField()
+    mean_age = models.IntegerField()
+    work_in_team = models.BooleanField()
+    stubbornness_level = models.IntegerField()
 
     def __str__(self):
-        return self.question_text
+        return self.person
+
+    def get_type(self):
+        return self.person
 
     def was_published_recently(self):
         now = timezone.now()
@@ -53,6 +73,13 @@ class Choice(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     choice_text = models.CharField(max_length=200)
     votes = models.IntegerField(default=0)
+    user_id = models.TextField()
+
+    # Fields specific to different types of answers
+    is_checked = models.BooleanField(default=False)  # For type 1 (Checkbox choose y/n)
+    numeric_answer = models.IntegerField(null=True, default=0)  # For type 2 (Answer should be a Number)
+    text_answer = models.CharField(max_length=200, default=False)  # For type 3 (Answer should be a Text)
+    grade = models.IntegerField(null=True, default=0)  # For type 2 (Answer should be a Number)
 
     def __str__(self):
         return self.choice_text
