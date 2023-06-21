@@ -10,8 +10,8 @@
 
 <form method="POST" action="">
     {% csrf_token %}
-    <input type="text" name="user_message" placeholder="Your message" required>
-    <button type="submit">Send</button>
+    <input type="text" width="200" name="user_message" placeholder="Your message" required id="bot-talk">
+    <button type="submit">Response</button>
 </form>
 <p></p>
 <div id="chat-history">

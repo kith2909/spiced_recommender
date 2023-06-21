@@ -77,7 +77,7 @@ WSGI_APPLICATION = "recommend_web.wsgi.application"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME':  "recommender",
+        'NAME':  "recommender_new",
         'USER': "postgres",
         'PASSWORD': "postgres",
         'HOST': 'localhost',

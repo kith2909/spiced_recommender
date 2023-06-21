@@ -1,17 +1,49 @@
 from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
 from django.shortcuts import render
-from .models import Choice, Question, ChatMessage, Answer, Person
-from .forms import ChoiceForm  # Make sure that the ChoiceForm is imported
-from .models import ChatMessage
+from .models import Choice, Question, ChatMessage, Answer, Profile
+from .forms import QuestionFormSet
+
 from .chat_ai import get_bot_response
 
 
+class ProfileView(generic.ListView):
+    template_name = 'recommend_edu//detail.html'
+    success_url = 'recommend_edu:votes'
+    ai_cookie = 'chat_to_grow'
+
+    def get(self, request):
+        user_id = self.request.COOKIES.get(self.ai_cookie)
+        # Try to get the Person instance if it exists or create a new one
+        user, created = Profile.objects.get_or_create(user_id=user_id)
+        formset = QuestionFormSet(instance=user)
+        return render(request, self.template_name, {'formset': formset})
+
+    def post(self, request):
+        user_id = self.request.COOKIES.get(self.ai_cookie)
+        # Try to get the Person instance if it exists or create a new one
+        user, created = Profile.objects.get_or_create(user_id=user_id)
+        formset = QuestionFormSet(request.POST, instance=user)
+        if formset.is_valid():
+            formset.save()
+            return redirect(self.success_url, profile_id=user.id)
+
+        return render(request, self.template_name, {'formset': formset})
+
+
+class VotesView(generic.ListView):
+    template_name = 'recommend_edu//votes.html'
+
+    def get(self, request, profile_id):
+        answer = Answer.objects.get(id=profile_id)
+        return render(request, self.template_name, {'answer': answer})
+
+
 class ChatView(generic.ListView):
-    template_name = "recommend_edu/chat.html"
+    template_name = "recommend_edu//chat.html"
     context_object_name = "chat_history"
     ai_cookie = 'chat_to_grow'
 
@@ -25,9 +57,22 @@ class ChatView(generic.ListView):
         return ChatMessage.objects.filter(user_id=user_id).order_by('-timestamp')
 
     def post(self, request, *args, **kwargs):
+        '''
+        Analysis for user Profile using pretrained openAi model
+        :return: bot-assistant response, for details check chat_ai.py
+        '''
         user_message = request.POST.get('user_message')
-        bot_response = get_bot_response(user_message)
         user_id = request.COOKIES.get(self.ai_cookie)
+        try:
+            user = Profile.objects.get(user_id=user_id)
+
+            # IMPORTANT - switch to a Profile information after prediction
+
+            answer = Answer.objects.get(id=user.id)
+            bot_response = get_bot_response(user_message, mean_age=answer.mean_age)
+        except Exception as e:
+            bot_response = get_bot_response(user_message)
+
         ChatMessage.objects.create(user_id=user_id, user_message=user_message, bot_response=bot_response)
         response = self.get(request, *args, **kwargs)
         response.set_cookie(self.ai_cookie, user_id)
@@ -48,6 +93,7 @@ class IndexView(generic.ListView):
                ]
 
 
+'''
 class AnswerFormView(generic.ListView):
     template_name = 'recommend_edu//detail.html'
     success_url = 'recommend_edu:votes'
@@ -66,25 +112,6 @@ class AnswerFormView(generic.ListView):
             return redirect(self.success_url)
         else:
             return render(request, self.template_name, {'formset': formset})
-
-
-'''
-class QuestionaryView(generic.ListView):
-    model = Question
-    template_name = "recommend_edu/detail.html"
-
-    def get_queryset(self):
-        return Question.objects.order_by('-id')[:5]
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['form'] = ChoiceForm()
-        return context
-
-
-class ResultsView(generic.DetailView):
-    model = Question
-    template_name = "recommend_edu//results.html"
 
 
 def vote(request, user_id):

@@ -1,0 +1,105 @@
+
+
+prompt_full = f""" Format every answer as HTML that can be used in a website.
+                Place the description in a <div> element.
+                Place lists in <ul> <li> tags.
+                Do not answer questions, that is out of Educational content.
+                Do not give decisions or answers for any types Homework or Technical tasks.
+
+
+                    Make your answers as simple as possible.
+                    Suggest some kids educational clubs based on ```{location}``` and   ```{skills}```
+                    Use riddles and kids jokes.
+                    If conversation lake longer than 10 messages - try to ask kid to call parents. ```
+
+                2. If ```{mean_age}``` from 25 to 59:
+                    Make your answers adjusted for active adult person.
+
+                    For the answer make analysis of skills ```{skills}```
+                    Make the best decision, to achieve a Job goal for our user ```{goal}``` based on
+                    ```{location}``` and   ```{skills}```.
+                    In first place suggest Short educational programs. In that step suggest Spiced Academy,
+                    if ```{skills}``` are technical.
+                    In second place suggest Universities and longer programs.
+                    If ```{lang}``` less than B1 level suggest places, where person could have language study or practice.
+
+                    If conversation lake longer than 5 messages:
+                    Use some music quotes.
+                    Suggest some positive free time activities for an active persons based on ```{location}```
+                    You could use some travel advices and some motivational quotes.
+
+                3. If ```{mean_age}``` from 60 and higher:
+                    Make your answers adjusted for the wise adult person. Use some poetry quotes.
+                    Make the best decision, to achieve a Job goal for our user ```{goal}```, that would be achievable
+                    for after 60 years old.
+                    Suggest some positive free time activities for older persons based on ```{location}``` and   ```{skills}```
+                    If ```{lang}``` less than B1 level suggest places, where person could have language study or practice.
+                    If conversation lake longer than 5 messages:
+                    You could use some travel advices and some motivational quotes.
+
+               4.  If ```{mean_age}``` from 11 to 24:
+                    Try to make an answer for a young future University or OSZ student: ```{question}```
+                    For the answer make analysis of skills ```{skills}```
+                    Make the best decision, to achieve a goal of our user ```{goal}```
+                    If ```{lang}``` less than B1 level suggest places, where person could have language study or practice.
+                    You can make additional question, which will allow you to find best educational advices.
+                    In you language you could use some youth slang.
+                    If conversation lake longer than 5 messages:
+                    Suggest some positive free time activities for teenagers based on ```{location}```
+                """
++ tech_1
+Technical, Logical thinking
+Abishek traveled from Japan to Indonesia. In Indonesia, he departed by plane from Cengkareng, Jakarta to Jayapura. The plane took off from Jakarta airport at 20.00 local time and landed at Jayapura airport at 06.00 local time. If during the flight the plane stops at Surabaya and Makassar airports for 30 minutes each, how long will the entire Danish journey take?
+1. 9 hours
+2. 10 hours
+3. 7 hours !!
+4. 12 hours
+
+
++ tech_2
+It takes 6 people for three days to upload HUGE amount of data and not to be blocked. How many people are needed if the Upload is to be completed in 1/2 day?
+1. 72 people
+2. 36 people !!
+3. 18 people
+4. 9 people
+
+
++ logic_1
+Analytic, English, Reading, Analytical and Verbal Ability
+
+"Sam was preparing for a final presentation and studied late into the night. The following morning,
+he overslept and realized he would be late for the final presentation. In his rush,
+ Sam didn't notice his untied shoelaces, tripped, and sprained his ankle. He had to be taken to the hospital.
+ His group mates came to visit him, curious about what had caused Sam's mishap."
+Which of the following conclusions is most correct?
+
+1. Sam sprained his ankle because he didn't have breakfast.
+2. Sam's group mates visited him at the hospital because they wanted to understand why Sam was late for the final presentation.
+3. Sam didn't notice his shoelaces because he overslept.
+4. Sam sprained his ankle because he studied late into the night. !!
+
++ logic_2
+Parvin likes David. Who likes Rahib likes Carmine. Helen likes only smart men. So:
+1. Carmine is not a smart man
+2. Carmine is a smart man !!
+3. Rahib and Carmine like Parvin
+4. Parvin doesn't like Rahib
+
+ + responsible
+Responsibility and Organization skills
+10.	If there is a less pleasant task, that I need to do
+1. I'll still finish it because it's my responsibility
+2. Instead of stressing me out, I'd better find someone else to do it, and then I'll just check
+3. I have the right to protest to my boss
+4. I will try finish it even though it feels heavy, but do it as slow as possible
+5. I ask my co-workers to help solve it, but do it mostly myself
+
+
+
++ 2. Your location (country, city)
++ 3. Hobbies
++ 4. Write two favorite subjects in school or university
++ 5. For what skills you've got the best feedback from your colleagues or friends in last 3 years
++ 6. What is your level for national language in country, that you want to  study or work?
++ 7. What would you prefer most of the time: work_in_team
++ 1. Please write you age
