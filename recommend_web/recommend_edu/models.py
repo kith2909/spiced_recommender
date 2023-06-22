@@ -31,16 +31,16 @@ class Answer(models.Model):
     hobbies = models.TextField(default='')
     mean_age = models.IntegerField(default=100)
     work_in_team = models.BooleanField(default=False)
-    stubbornness_rate = models.IntegerField(default='')
+    stubbornness_rate = models.IntegerField(default=0)
     location = models.TextField(default='Berlin, Germany')
     subjects = models.TextField(default='')
     feedback = models.TextField(default='')
     lang = models.TextField(default='')
     responsible = models.TextField(default='')
-    logic_1 = models.IntegerField(default='')
-    logic_2 = models.IntegerField(default='')
-    tech_1 = models.IntegerField(default='')
-    tech_2 = models.IntegerField(default='')
+    logic_1 = models.IntegerField(default=0)
+    logic_2 = models.IntegerField(default=0)
+    tech_1 = models.IntegerField(default=0)
+    tech_2 = models.IntegerField(default=0)
 
 
 class Job(models.Model):
@@ -58,7 +58,7 @@ class Job(models.Model):
                   f'{self.minimum_qualifications} {self.preferred_qualifications} {self.salary}'
         return out_str
 
-
+'''
 class Question(models.Model):
     profile_id = models.ForeignKey(Profile, on_delete=models.CASCADE)
     question_text = models.CharField(max_length=200)
@@ -102,3 +102,4 @@ class Choice(models.Model):
 
     def __str__(self):
         return self.choice_text
+'''

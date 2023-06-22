@@ -1,8 +1,10 @@
+"""
+
 import psycopg2
 from psycopg2 import sql
 
 conn = psycopg2.connect(
-    dbname="recommender",
+    dbname="recommender_test",
     user="postgres",
     password="postgres",
     host="localhost",
@@ -47,3 +49,4 @@ for row in rows:
 
 cur.close()
 conn.close()
+"""

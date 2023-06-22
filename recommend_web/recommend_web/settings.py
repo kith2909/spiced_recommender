@@ -41,8 +41,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.security.SecurityMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -127,6 +127,6 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
 
-SESSION_COOKIE_NAME = 'chat_to_grow'
+SESSION_COOKIE_NAME = 'csrftoken'

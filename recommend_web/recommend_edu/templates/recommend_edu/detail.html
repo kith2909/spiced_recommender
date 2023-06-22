@@ -1,21 +1,22 @@
-
 {% extends 'recommend_edu/base.html' %}
 
 {% block title %}Recommender System, Questionnaire{% endblock %}
 {% block content %}
  <h2>Step 1. Short test</h2>
 
-    <div class = 'mt-5'>
-      <h3>Please, fill your profile.</h3>
-        <p>Explanation</p>
-        <!-- templates/profile.html -->
-         <form method="post">
+    <div class='mt-5'>
+        <h3>Please, fill your profile.</h3>
+        <p>Explanation for the test</p>
+
+        <!-- templates/detail.html -->
+        <form method="post">
             {% csrf_token %}
             {{ formset.management_form }}
-            {% for form in formset %}
-                {{ form.as_p }}
+             {% for form in formset %}
+                  {{ form }}
             {% endfor %}
+
             <input type="submit" value="Submit">
-         </form>
+        </form>
     </div>
 {% endblock %}
