@@ -8,9 +8,44 @@ from .models import ChatMessage, Answer, Profile, Job
 from .forms1 import QuestionFormSet
 from .forms import AnswerForm
 from .chat_ai import get_bot_response
+import pickle
+import imblearn
+import numpy as np
 
+with open('recommend_edu/supporters/model_preffered.pkl', 'rb') as f:
+    model_preferred = pickle.load(f)
 
-#
+with open('recommend_edu/supporters/model_responsibilities.pkl', 'rb') as f:
+    model_responsibilities = pickle.load(f)
+
+models = {"Model Preferred Skills": model_preferred,
+          "Model trained on responsibilities": model_responsibilities
+          }
+
+images_print = {'Program Management': '../../static/img/program_managment.png',
+                'Manufacturing & Supply Chain': '../../static/img/Marketing_Communications.png',
+                'Technical Solutions': '../../static/img/technical_solution.png',
+                'Developer Relations': '../../static/img/line.png',
+                'Hardware Engineering': '../../static/img/line.png',
+                'Partnerships': '../../static/img/line.png',
+                'Product & Customer Support': '../../static/img/line.png',
+                'Software Engineering': '../../static/img/line.png',
+                'Data Center & Network': '../../static/img/line.png',
+                'Business Strategy': '../../static/img/strategy.png',
+                'Technical Writing': '../../static/img/line.png',
+                'Technical Infrastructure': '../../static/img/line.png',
+                'IT & Data Management': '../../static/img/line.png',
+                'Marketing & Communications': '../../static/img/Marketing_Communications.png',
+                'Network Engineering': '../../static/img/line.png',
+                'Sales & Account Management': '../../static/img/line.png',
+                'Sales Operations': '../../static/img/line.png',
+                'Finance': '../../static/img/line.png',
+                'Legal & Government Relations': '../../static/img/line.png',
+                'Administrative': '../../static/img/line.png',
+                'User Experience & Design': '../../static/img/users_design.png',
+                'People Operations': '../../static/img/line.png',
+                'Real Estate & Workplace Services': '../../static/img/line.png'}
+
 
 class AnswerView(generic.FormView):
     template_name = 'recommend_edu//results.html'
@@ -27,34 +62,6 @@ class AnswerView(generic.FormView):
 
             return redirect('recommend_edu:votes')
         return render(request, self.template_name, {'form': form})
-
-
-'''
-class ProfileView(generic.FormView):
-    template_name = 'recommend_edu//detail.html'
-    success_url = 'recommend_edu:votes'
-    ai_cookie = 'csrftoken'
-    form_class = QuestionFormSet
-
-    def get(self, request):
-        user_id = self.request.COOKIES.get(self.ai_cookie)
-        print('COOKIE:', user_id)
-        # Try to get the Person instance if it exists or create a new one
-        user, created = Profile.objects.get_or_create(user_id=user_id)
-        formset = QuestionFormSet(instance=user)
-        return render(request, self.template_name, {'formset': formset})
-
-    def post(self, request):
-        user_id = self.request.COOKIES.get(self.ai_cookie)
-        # Try to get the Person instance if it exists or create a new one
-        user, created = Profile.objects.get_or_create(user_id=user_id)
-        formset = QuestionFormSet(request.POST, instance=user)
-        if formset.is_valid():
-            formset.save()
-            return redirect(self.success_url, profile_id=user.id)
-
-        return render(request, self.template_name, {'formset': formset})
-'''
 
 
 class ProfileView(generic.FormView):
@@ -86,13 +93,49 @@ class VotesView(generic.ListView):
     ai_cookie = 'csrftoken'
 
     def get(self, request):
+        user_id = self.request.COOKIES.get(self.ai_cookie)
+        user, create = Profile.objects.get_or_create(user_id=user_id)
+        answer = Answer.objects.filter(profile_id=user.id).latest('id')
         try:
-            user_id = self.request.COOKIES.get(self.ai_cookie)
-            user, create = Profile.objects.get_or_create(user_id=user_id)
-            answer = Answer.objects.get(profile_id=user.id)
-            return render(request, self.template_name, {'answer': answer})
+            user.age = answer.mean_age
+            user.hobbies = answer.hobbies
+            user.location = answer.location
+            user.language = answer.lang
+            skills = answer.feedback + ', ' + answer.hobbies + ', ' + answer.subjects
+            if answer.work_in_team:
+                skills += ' communicative, office, management, '
+            else:
+                skills += ' home office, remote, '
+
+            if answer.logic_1 == 4 and answer.logic_2 == 2:
+                skills += ' logic, analytic, good english, '
+            else:
+                skills += ' sense of humour, '
+
+            if answer.tech_1 == 3 and answer.tech_2 == 2:
+                skills += ' technical, data analysis, computer science, '
+            else:
+                skills += 'Design, creativity, people oriented, '
+
+            if answer.responsible in [2, 5]:
+                skills += 'Strong Organization,  team lead, strategy, '
+            else:
+                skills += 'People, psychology, marketing, '
+
+            user.skills = skills
+
+            for key, model in models.items():
+                print(key, model.predict([skills]))
+
+            user.goal = model_preferred.predict([skills])
+            user.goal_extra = model_responsibilities.predict([skills])
+            user.img = images_print['Marketing & Communications']
+            user.save()
+            return render(request, self.template_name, {'profile': user})
+
         except:
-            return render(request, self.template_name, {'answer': 'You need to go true test first)'})
+
+            return render(request, self.template_name, {'profile': user})
 
 
 class ChatView(generic.ListView):
@@ -116,14 +159,17 @@ class ChatView(generic.ListView):
         '''
         user_message = request.POST.get('user_message')
         user_id = request.COOKIES.get(self.ai_cookie)
+        user = Profile.objects.get(user_id=user_id)
+        print(user.skills)
         try:
-            user = Profile.objects.get(user_id=user_id)
-
-            # IMPORTANT - switch to a Profile information after prediction
-
-            answer = Answer.objects.get(id=user.id)
-            bot_response = get_bot_response(user_message, mean_age=answer.mean_age)
+            bot_response = get_bot_response(user_message,
+                                            skills=user.skills,
+                                            goal=user.goal,
+                                            mean_age=user.age,
+                                            location=user.location,
+                                            lang=user.language)
         except Exception as e:
+            print('Exception', e, user_id)
             bot_response = get_bot_response(user_message)
 
         ChatMessage.objects.create(user_id=user_id, user_message=user_message, bot_response=bot_response)

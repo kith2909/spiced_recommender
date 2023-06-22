@@ -12,7 +12,5 @@ models = {"Model Preferred Skills": model_preferred,
           "Model trained on responsibilities": model_responsibilities
           }
 
-skills = ['speak fluently idiomatically write communicate create english']
-
 for key, model in models.items():
-    print(key, model.predict(skills))
+    print(key, model.predict('test'))
