@@ -29,7 +29,7 @@ images_print = {'Program Management': '../../static/img/program_managment.png',
                 'Hardware Engineering': '../../static/img/line.png',
                 'Partnerships': '../../static/img/line.png',
                 'Product & Customer Support': '../../static/img/line.png',
-                'Software Engineering': '../../static/img/line.png',
+                'Software Engineering': '../../static/img/software.png',
                 'Data Center & Network': '../../static/img/line.png',
                 'Business Strategy': '../../static/img/strategy.png',
                 'Technical Writing': '../../static/img/line.png',
@@ -95,7 +95,7 @@ class VotesView(generic.ListView):
     def get(self, request):
         user_id = self.request.COOKIES.get(self.ai_cookie)
         user, create = Profile.objects.get_or_create(user_id=user_id)
-        answer = Answer.objects.filter(profile_id=user.id).latest('id')
+        answer = Answer.objects.latest('id')
         try:
             user.age = answer.mean_age
             user.hobbies = answer.hobbies
@@ -129,7 +129,7 @@ class VotesView(generic.ListView):
 
             user.goal = model_preferred.predict([skills])
             user.goal_extra = model_responsibilities.predict([skills])
-            user.img = images_print['Marketing & Communications']
+            user.img = images_print[user.goal[0]]
             user.save()
             return render(request, self.template_name, {'profile': user})
 

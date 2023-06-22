@@ -79,11 +79,11 @@ Which of the following conclusions is most correct?
 4. Sam sprained his ankle because he studied late into the night. !!
 
 + logic_2
-Parvin likes David. Who likes Rahib likes Carmine. Helen likes only smart men. So:
+Parvin likes Rakib. Who likes Rakib likes Carmine. Helen likes only smart men. So:
 1. Carmine is not a smart man
-2. Carmine is a smart man !!
-3. Rahib and Carmine like Parvin
-4. Parvin doesn't like Rahib
+2. Carmine is a smart man
+3. Rakib and Carmine like Parvin
+4. Parvin doesn't like Rakib
 
  + responsible
 Responsibility and Organization skills
